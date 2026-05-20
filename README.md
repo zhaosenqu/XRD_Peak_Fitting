@@ -1,6 +1,7 @@
 # Fitting Engine — Levenberg-Marquardt Optimization
 
 Levenberg-Marquardt optimization of the Pseudo-Voigt profile (Gaussian + Lorentzian mix with free η parameter and linear background), ~800 iterations, computing R², integrated area, and all peak metrics from scratch in pure JS.
+Access Here: https://zhaosenqu.github.io/XRD_Peak_Fitting/
 
 ## Two Scan Modes
 
