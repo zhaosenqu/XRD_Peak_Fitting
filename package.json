@@ -1,0 +1,36 @@
+{
+  "name": "xrd_peak_fitting",
+  "version": "1.0.0",
+  "description": "Levenberg-Marquardt optimization of the Pseudo-Voigt profile (Gaussian + Lorentzian mix with free η parameter and linear background), ~800 iterations, computing R², integrated area, and all peak metrics from scratch in pure JS.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhaosenqu/XRD_Peak_Fitting.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/zhaosenqu/XRD_Peak_Fitting/issues"
+  },
+  "homepage": "https://zhaosenqu.github.io/XRD_Peak_Fitting",
+  "dependencies": {
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "recharts": "^3.8.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.2",
+    "gh-pages": "^6.3.0",
+    "vite": "^8.0.13"
+  }
+}
