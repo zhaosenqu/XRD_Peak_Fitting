@@ -551,8 +551,7 @@ export default function XRDDashboard() {
         )}
 
         {/* Footer */}
-        <div style={{ textAlign: "center", padding: "24px 0 12px" }}>
-          <div style={{ fontSize: 10, color: "#334155", letterSpacing: 1.5, marginBottom: 8 }}>
+        <div style={{ textAlign: "center", padding: "24px 0 12px", fontSize: 10, color: "#334155", letterSpacing: 1.5 }}>
           XRD PEAK ANALYZER · PSEUDO-VOIGT FITTING · AlN THIN FILM CHARACTERIZATION
         </div>
       </div>
