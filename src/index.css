@@ -10,7 +10,7 @@ html, body {
   width: 100%;
   height: 100%;
   overflow-x: hidden;
-  background: linear-gradient(170deg, #0b1120 0%, #0f172a 40%, #131c33 100%);
+  background: #f6f7f9;
 }
 
 #root {
