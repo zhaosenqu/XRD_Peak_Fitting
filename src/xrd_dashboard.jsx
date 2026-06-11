@@ -206,49 +206,6 @@ function analyzeXRR(data, lambdaA, zOverA) {
   return { thetaC, neA3, massDensity, thickness, nFringes: fringeAngles.length, fringeAngles };
 }
 
-// ─── Demo Data Generator ─────────────────────────────────────────────────────
-function generateDemoData(mode) {
-  const points = [];
-  if (mode === "xrr") {
-    // Single film: thickness 480 Å, critical angle 0.30° (Cu Kα).
-    const nPts = 800, lam = 1.5406, thetaC = 0.30, t = 480, R0 = 1e6;
-    const sin2c = Math.sin(thetaC * DEG) ** 2;
-    for (let i = 0; i < nPts; i++) {
-      const x = 0.05 + (2.95 * i) / (nPts - 1);
-      let env, osc = 1;
-      if (x <= thetaC) {
-        env = R0;
-      } else {
-        const k = Math.sqrt(x * x - thetaC * thetaC);      // Fresnel small-angle edge
-        env = R0 * ((x - k) / (x + k)) ** 2;
-        const arg = Math.sin(x * DEG) ** 2 - sin2c;        // Kiessig oscillation
-        if (arg > 0) osc = 1 + 0.6 * Math.cos(2 * Math.PI * 2 * t * Math.sqrt(arg) / lam);
-      }
-      const signal = env * osc + 5;
-      const noise = Math.sqrt(Math.max(signal, 1)) * (Math.random() * 2 - 1);
-      points.push({ angle: parseFloat(x.toFixed(4)), intensity: Math.max(1, Math.round(signal + noise)) });
-    }
-    return points;
-  }
-  const nPts = 500;
-  if (mode === "omega") {
-    for (let i = 0; i < nPts; i++) {
-      const x = -5 + (10 * i) / (nPts - 1);
-      const signal = 12000 * Math.exp(-4 * Math.LN2 * (x ** 2) / (1.8 ** 2));
-      const noise = Math.sqrt(Math.max(signal, 1)) * (Math.random() * 2 - 1);
-      points.push({ angle: parseFloat(x.toFixed(4)), intensity: Math.max(0, Math.round(signal + 50 + noise)) });
-    }
-  } else {
-    for (let i = 0; i < nPts; i++) {
-      const x = 34 + (4 * i) / (nPts - 1);
-      const signal = 25000 * Math.exp(-4 * Math.LN2 * ((x - 36.04) ** 2) / (0.35 ** 2));
-      const noise = Math.sqrt(Math.max(signal, 1)) * (Math.random() * 2 - 1);
-      points.push({ angle: parseFloat(x.toFixed(4)), intensity: Math.max(0, Math.round(signal + 120 + noise)) });
-    }
-  }
-  return points;
-}
-
 // ─── Parse uploaded file ─────────────────────────────────────────────────────
 function parseXRDFile(text) {
   const lines = text.split(/\r?\n/);
@@ -369,13 +326,6 @@ export default function XRDDashboard() {
     reader.readAsText(file);
   }, []);
 
-  const loadDemo = useCallback(() => {
-    setError("");
-    const names = { omega: "demo_rocking_curve.xy", theta2theta: "demo_theta2theta.xy", xrr: "demo_xrr.xy" };
-    setFileName(names[scanMode]);
-    setRawData(generateDemoData(scanMode));
-  }, [scanMode]);
-
   const addToLog = useCallback(() => {
     if (!fitResult) return;
     setSampleLog(prev => [...prev, {
@@ -466,8 +416,7 @@ export default function XRDDashboard() {
             </div>
           </div>
           <div style={{ ...styles.card, display: "flex", flexDirection: "column", gap: 12, justifyContent: "center", minWidth: 220 }}>
-            <button style={styles.btn("primary")} onClick={loadDemo}>Load demo data</button>
-            {!isXRR && rawData && fitResult && <button style={styles.btn()} onClick={addToLog}>Add to sample log</button>}
+            {!isXRR && rawData && fitResult && <button style={styles.btn("primary")} onClick={addToLog}>Add to sample log</button>}
             {scanMode === "theta2theta" && (
               <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: C.textMuted, cursor: "pointer" }}>
                 <input type="checkbox" checked={logScale} onChange={(e) => setLogScale(e.target.checked)}
@@ -740,7 +689,10 @@ export default function XRDDashboard() {
           <div style={{ ...styles.card }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <div style={styles.sectionLabel}>Sample Log ({sampleLog.length})</div>
-              <button style={styles.btn("primary")} onClick={exportCSV}>Export CSV</button>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button style={styles.btn()} onClick={() => setSampleLog([])}>Clear log</button>
+                <button style={styles.btn("primary")} onClick={exportCSV}>Export CSV</button>
+              </div>
             </div>
             <div style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
