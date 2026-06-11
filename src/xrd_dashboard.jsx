@@ -352,7 +352,12 @@ export default function XRDDashboard() {
 
   const xLabel = isXRR ? "Incidence angle θ (°)" : scanMode === "omega" ? "ω (°)" : "2θ (°)";
   const yLabel = isXRR ? "Reflectivity (counts)" : "Intensity (counts)";
-  const fmtCounts = (v) => v >= 1e6 ? (v / 1e6) + "M" : v >= 1e3 ? (v / 1e3) + "k" : v;
+  const fmtCounts = (v) => {
+    if (v >= 1e6) return (v / 1e6).toFixed(1).replace(/\.0$/, "") + "M";
+    if (v >= 1e3) return (v / 1e3).toFixed(1).replace(/\.0$/, "") + "k";
+    return v;
+  };
+  const showControls = isXRR || scanMode === "theta2theta" || !!(rawData && fitResult);
 
   // XRR plot data (positive-floored for log axis) + fringe markers
   const xrrData = isXRR && rawData ? rawData.map(d => ({ angle: d.angle, R: Math.max(d.intensity, 1) })) : [];
@@ -415,6 +420,7 @@ export default function XRDDashboard() {
               <div style={{ fontSize: 12, color: C.textFaint, marginTop: 6 }}>Two-column format: angle &nbsp; intensity</div>
             </div>
           </div>
+          {showControls && (
           <div style={{ ...styles.card, display: "flex", flexDirection: "column", gap: 12, justifyContent: "center", minWidth: 220 }}>
             {!isXRR && rawData && fitResult && <button style={styles.btn("primary")} onClick={addToLog}>Add to sample log</button>}
             {scanMode === "theta2theta" && (
@@ -439,6 +445,7 @@ export default function XRDDashboard() {
               </>
             )}
           </div>
+          )}
         </div>
 
         {error && (
@@ -678,8 +685,11 @@ export default function XRDDashboard() {
         {/* Empty State */}
         {!rawData && !error && (
           <div style={{ ...styles.card, textAlign: "center", padding: "60px 20px", marginBottom: 20 }}>
-            <div style={{ fontSize: 14, color: C.textMuted, maxWidth: 440, margin: "0 auto", lineHeight: 1.8 }}>
-              Upload an X-ray data file to begin analysis, or click <strong style={{ color: C.accent }}>Load demo data</strong> to explore with synthetic {isXRR ? "reflectivity" : "AlN (0002)"} data.
+            <div style={{ fontSize: 14, color: C.textMuted, maxWidth: 460, margin: "0 auto", lineHeight: 1.8 }}>
+              Upload a two-column data file (angle, intensity) to begin analysis.
+              {isXRR
+                ? " For XRR, start the scan below the critical angle so the total-reflection plateau is captured."
+                : " After loading, adjust the fit range to isolate a single peak."}
             </div>
           </div>
         )}
