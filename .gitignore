@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Build output (published to the gh-pages branch by `npm run deploy`)
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
